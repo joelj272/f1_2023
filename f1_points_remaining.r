@@ -174,7 +174,7 @@ const_earliest <- const_earliest %>%
   mutate(stage = factor(stage, levels = const_earliest$stage))
 
 ggplot(const_earliest) +
-  geom_col(aes(x = stage, y = rb_dif_to_merc), fill = '#1D2F40') +
+  geom_col(aes(x = stage, y = rb_dif_to_merc), fill = '#1D2F40', width = 0.8) +
   geom_step(aes(x = stage, y = maximum_points_remaining_after_race, group = 1),
             colour = '#F22E52', position = position_nudge(x = -0.5), size = 1) +
   scale_x_discrete(labels = wrap_format(10)) +
@@ -185,8 +185,9 @@ ggplot(const_earliest) +
         axis.text.x = element_text(size = 9),
         axis.ticks = element_blank(),
         panel.grid.major.y = element_line(),
-        title = element_text(size = 16)) +
-  geom_text(aes(x = 'Hungary', y = 570), label = 'Available points remaining after race', 
+        title = element_text(size = 16),
+        plot.caption = element_text(hjust = 0)) +
+  geom_text(aes(x = 'Hungary', y = 570), label = 'Available points remaining after race',
             colour = '#F22E52', hjust = 0) +
   geom_text(aes(x = 'Netherlands', y = 380), label = 'Red Bull points lead over second',
             colour = '#1D2F40', hjust = 0.9) +
@@ -194,6 +195,66 @@ ggplot(const_earliest) +
   ylab(NULL) +
   labs(title = 'The earliest Red Bull can win the constructors championship is in Monza',
        subtitle = 'Red Bull are unreachable when the navy bar surpasses the red line',
-       caption = 'Assuming Red Bull recieve maximum points at each race, whilst second place team does not improve their points')
+       caption = 'Scenario:\nRed Bull score maximum points at each race\nSecond place team does not surpass current points')
 
 ggsave('constructors_earliest.png', height = 7, width = 10)
+
+
+## without annotation
+
+ggplot(const_earliest) +
+  geom_col(aes(x = stage, y = rb_dif_to_merc), fill = '#1D2F40', width = 0.8) +
+  geom_step(aes(x = stage, y = maximum_points_remaining_after_race, group = 1),
+            colour = '#F22E52', position = position_nudge(x = -0.5), size = 1) +
+  scale_x_discrete(labels = wrap_format(10)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  theme_classic() +
+  theme(axis.line.y = element_blank(),
+        #axis.title.y = element_text(angle = 0),
+        axis.text.x = element_text(size = 9),
+        axis.ticks = element_blank(),
+        panel.grid.major.y = element_line(),
+        title = element_text(size = 16),
+        plot.caption = element_text(hjust = 0)) +
+  xlab(NULL) +
+  ylab(NULL) +
+  labs(title = 'The earliest Red Bull can win the constructors championship is in Monza',
+       subtitle = '',
+       caption = 'Scenario:\nRed Bull score maximum points at each race\nSecond place team does not surpass current points')
+
+ggsave('constructors_earliest_no_annotation.png', height = 7, width = 10)
+
+
+### Most likely
+
+const_most_likely <- const_most_likely %>% 
+  mutate(stage = case_when(format == 'Sprint' ~ paste0(stage, ' sprint'),
+                           TRUE ~ stage))
+
+const_most_likely <- const_most_likely %>% 
+  mutate(stage = factor(stage, levels = const_most_likely$stage))
+
+ggplot(const_most_likely) +
+  geom_col(aes(x = stage, y = rb_dif_to_merc), fill = '#1D2F40', width = 0.8) +
+  geom_step(aes(x = stage, y = maximum_points_remaining_after_race, group = 1),
+            colour = '#F22E52', position = position_nudge(x = -0.5), size = 1) +
+  scale_x_discrete(labels = wrap_format(10)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  theme_classic() +
+  theme(axis.line.y = element_blank(),
+        #axis.title.y = element_text(angle = 0),
+        axis.text.x = element_text(size = 9),
+        axis.ticks = element_blank(),
+        panel.grid.major.y = element_line(),
+        title = element_text(size = 16),
+        plot.caption = element_text(hjust = 0)) +
+  xlab(NULL) +
+  ylab(NULL) +
+  labs(title = 'Red Bull would win the constructors championship in Japan if teams\ncontinue to 
+       score at their average rate in 2023 so far',
+       subtitle = '',
+       caption = 'Scenario:\nTeams continue to score points at the same rate scored so far in 2023')
+
+ggsave('constructors_most_likley_no_annotation.png', height = 7, width = 10)
+
+
